@@ -1,0 +1,161 @@
+openapi: 3.0.0
+info:
+  title: API Кинотеатра "Искорка"
+  version: 1.0.0
+  description: API для системы бронирования кинотеатра "Искорка"
+paths:
+  /films:
+    get:
+      summary: Получить список фильмов
+      responses:
+        '200':
+          description: Успешный ответ с списком фильмов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Уникальный идентификатор фильма
+                    title:
+                      type: string
+                      description: Название фильма
+                    genre:
+                      type: string
+                      description: Жанр фильма
+                    age_rating:
+                      type: string
+                      description: Возрастной рейтинг
+                    duration:
+                      type: integer
+                      description: Длительность фильма (в минутах)
+
+  /sessions/{id}/availability:
+    get:
+      summary: Получение информации о наличии мест на сеанс
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор сеанса
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный ответ с информацией о доступных местах
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available_seats:
+                    type: array
+                    items:
+                      type: integer
+                  total_seats:
+                    type: integer
+                  booked_seats:
+                    type: integer
+
+  /bookings:
+    post:
+      summary: Бронирование мест
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: integer
+                customer:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    contact:
+                      type: string
+                seats:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      row:
+                        type: integer
+                      seat:
+                        type: integer
+      responses:
+        '200':
+          description: Успешное создание бронирования
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  booking_id:
+                    type: integer
+                  status:
+                    type: string
+
+  /bookings/{id}:
+    delete:
+      summary: Отмена бронирования
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор бронирования
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешная отмена бронирования
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+  /sessions/{id}:
+    patch:
+      summary: Изменение времени сеанса
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор сеанса
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_time:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Успешное изменение времени сеанса
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  new_time:
+                    type: string
+                    format: date-time
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/lelekinkirillgmailco/Spark/1.0.0
